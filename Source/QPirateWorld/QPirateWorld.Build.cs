@@ -9,7 +9,7 @@ public class QPirateWorld : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTags", "GameplayTasks", 
-			"Core", "CoreUObject", "Engine", "InputCore" });
+			"Core", "CoreUObject", "Engine", "InputCore", "AIModule" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

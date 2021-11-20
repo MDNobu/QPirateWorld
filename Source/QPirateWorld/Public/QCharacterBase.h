@@ -38,12 +38,32 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "QPirate")
 	void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void BP_OnHealthChange(float health, float maxHealth);
-private:
 	UFUNCTION()
 	void OnHealthChange(float health, float maxHealth);
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnHealthChange"))
+	void BP_OnHealthChange(float health, float maxHealth);
 
+	UFUNCTION()
+	void OnManaChange(float mana, float maxMana);
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnManaChange"))
+	void BP_OnManaChange(float mana, float maxMana);
+
+	UFUNCTION()
+	void OnStrengthChange(float strength, float maxStrength);
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "OnStrengthChange"))
+	void BP_OnStrengthChange(float strength, float maxStrength);
+
+	UFUNCTION(BlueprintImplementableEvent, meta = (DisplayName = "Die"))
+	void BP_Die();
+
+	UFUNCTION(BlueprintCallable, Category = "QPirate")
+	bool IsHostile(AQCharacterBase* other) const;
+private:
+	
+
+
+	void AutoAssignTeamID();
+	void Die();
 private:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "QPirate", meta = (AllowPrivateAccess = true))
 	UAbilitySystemComponent* AbilitySystemComp = nullptr;
@@ -51,5 +71,10 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate", meta = (AllowPrivateAccess = true))
 	UQAttributeSetBase* HealthAttribute;
 
+	bool bIsDead = false;
 
+	const uint8 ENEMY_TEAM_ID = 255;
+	const uint8 PLAYER_TEAM_ID = 1;
+	/** teamID主要用来决定characterBase对象是否统一阵营，敌对情况 */
+	uint8 TeamID = 255;
 };

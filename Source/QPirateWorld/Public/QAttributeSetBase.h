@@ -18,14 +18,32 @@ class QPIRATEWORLD_API UQAttributeSetBase : public UAttributeSet
 public:
 	UQAttributeSetBase();
 
+
+
+
+	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+
+public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate")
 	FGameplayAttributeData Health {200.0f};
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate")
 	FGameplayAttributeData MaxHealth {200.0f};
 
-	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate")
+	FGameplayAttributeData Mana {100.0f};
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate")
+	FGameplayAttributeData MaxMana {100.0f};
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate")
+	FGameplayAttributeData Strength {100.0f};
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate")
+	FGameplayAttributeData MaxStrength {100.0f};
 
 	FOnHealthChangeDelegate OnHealthChange;
+	FOnHealthChangeDelegate OnManaChange;
+	FOnHealthChangeDelegate OnStrengthChange;
+
 };
