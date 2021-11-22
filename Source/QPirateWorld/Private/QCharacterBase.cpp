@@ -30,6 +30,8 @@ void AQCharacterBase::BeginPlay()
 	HealthAttribute->OnStrengthChange.AddDynamic(this, &AQCharacterBase::OnStrengthChange);
 
 	AutoAssignTeamID();
+
+	AddGameplayTag(GetFullHealthTag());
 }
 
 // Called every frame
@@ -73,6 +75,28 @@ bool AQCharacterBase::IsHostile(AQCharacterBase* other) const
 	return bHostile;
 }
 
+void AQCharacterBase::AddGameplayTag(const FGameplayTag& tagToAdd)
+{
+	AbilitySystemComp->AddLooseGameplayTag(tagToAdd);
+	AbilitySystemComp->SetTagMapCount(tagToAdd, 1);
+}
+
+void AQCharacterBase::RemoveGameplayTag(const FGameplayTag& tagToRemove)
+{
+	AbilitySystemComp->RemoveLooseGameplayTag(tagToRemove);
+}
+
+void AQCharacterBase::TryStun(float stunDuration)
+{
+	if (stunDuration <= 0)
+	{
+		return;
+	}
+
+	DisableControlInput();
+	GetWorldTimerManager().SetTimer(StunTimerHandle, this, &AQCharacterBase::EnableControlInput, stunDuration, false);
+}
+
 void AQCharacterBase::OnHealthChange(float health, float maxHealth)
 {
 	if (health <= 0 && !bIsDead)
@@ -109,13 +133,43 @@ void AQCharacterBase::AutoAssignTeamID()
 
 void AQCharacterBase::Die()
 {
+	DisableControlInput();
+}
+
+void AQCharacterBase::DisableControlInput()
+{
 	if (APlayerController* pc = Cast<APlayerController>(GetController()))
 	{
 		pc->DisableInput(pc);
 	}
 	if (AAIController* aic = Cast<AAIController>(GetController()))
 	{
-		aic->GetBrainComponent()->StopLogic(TEXT("Die"));
+		if (aic->GetBrainComponent())
+		{
+			aic->GetBrainComponent()->StopLogic(TEXT("Die"));
+		}
+	}
+}
+
+void AQCharacterBase::EnableControlInput()
+{
+	if (bIsDead)
+	{
+		return;
+	}
+
+	if (APlayerController* pc = Cast<APlayerController>(GetController()))
+	{
+		//pc->DisableInput(pc);
+		pc->EnableInput(pc);
+	}
+	if (AAIController* aic = Cast<AAIController>(GetController()))
+	{
+		if (aic->GetBrainComponent())
+		{
+			//aic->GetBrainComponent()->StopLogic(TEXT("Die"));
+			aic->GetBrainComponent()->RestartLogic();
+		}
 	}
 }
 

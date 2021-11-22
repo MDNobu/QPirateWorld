@@ -4,6 +4,7 @@
 #include "QAttributeSetBase.h"
 #include "GameplayEffectExtension.h"
 #include "GameplayEffectTypes.h"
+#include "QCharacterBase.h"
 
 UQAttributeSetBase::UQAttributeSetBase()
 {
@@ -13,13 +14,6 @@ UQAttributeSetBase::UQAttributeSetBase()
 void UQAttributeSetBase::PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& data)
 {
 	Super::PostGameplayEffectExecute(data);
-
-	Health.SetBaseValue(FMath::Clamp(Health.GetBaseValue(), 0.0f, MaxHealth.GetBaseValue()));
-	Health.SetCurrentValue(FMath::Clamp(Health.GetCurrentValue(), 0.0f, MaxHealth.GetCurrentValue()));
-	Mana.SetBaseValue(FMath::Clamp(Mana.GetBaseValue(), 0.0f, MaxMana.GetBaseValue()));
-	Mana.SetCurrentValue(FMath::Clamp(Mana.GetCurrentValue(), 0.0f, MaxMana.GetCurrentValue()));
-	Strength.SetBaseValue(FMath::Clamp(Strength.GetBaseValue(), 0.0f, MaxStrength.GetBaseValue()));
-	Strength.SetCurrentValue(FMath::Clamp(Strength.GetCurrentValue(), 0.0f, MaxStrength.GetCurrentValue()));
 
 
 	UProperty* targetProperty = data.EvaluatedData.Attribute.GetUProperty();
@@ -32,13 +26,33 @@ void UQAttributeSetBase::PostGameplayEffectExecute(const struct FGameplayEffectM
 
 	if (targetProperty == healthProperty)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ouch, taking damage health left %f"), Health.GetCurrentValue());
+		Health.SetBaseValue(FMath::Clamp(Health.GetBaseValue(), 0.0f, MaxHealth.GetBaseValue()));
+		Health.SetCurrentValue(FMath::Clamp(Health.GetCurrentValue(), 0.0f, MaxHealth.GetCurrentValue()));
+
+		AQCharacterBase* character = Cast<AQCharacterBase>(GetOwningActor());
+		if (Health.GetCurrentValue() >= MaxHealth.GetCurrentValue())
+		{
+			character->AddGameplayTag(character->GetFullHealthTag());
+		}
+		else
+		{
+			character->RemoveGameplayTag(character->GetFullHealthTag());
+		}
+
 		OnHealthChange.Broadcast(Health.GetCurrentValue(), MaxHealth.GetCurrentValue());
+		UE_LOG(LogTemp, Warning, TEXT("ouch, taking damage health left %f"), Health.GetCurrentValue());
 	} else if (targetProperty == manaProperty)
 	{
+		Mana.SetBaseValue(FMath::Clamp(Mana.GetBaseValue(), 0.0f, MaxMana.GetBaseValue()));
+		Mana.SetCurrentValue(FMath::Clamp(Mana.GetCurrentValue(), 0.0f, MaxMana.GetCurrentValue()));
+
 		OnManaChange.Broadcast(Mana.GetCurrentValue(), MaxMana.GetCurrentValue());
+		UE_LOG(LogTemp, Warning, TEXT(" mana left %f"), Mana.GetCurrentValue());
 	} else if ( targetProperty == strengthProperty)
 	{
+		Strength.SetBaseValue(FMath::Clamp(Strength.GetBaseValue(), 0.0f, MaxStrength.GetBaseValue()));
+		Strength.SetCurrentValue(FMath::Clamp(Strength.GetCurrentValue(), 0.0f, MaxStrength.GetCurrentValue()));
+
 		OnStrengthChange.Broadcast(Strength.GetCurrentValue(), MaxStrength.GetCurrentValue());
 	}
 }

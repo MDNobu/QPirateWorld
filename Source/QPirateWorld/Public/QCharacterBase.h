@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
-
+#include "GameplayTagContainer.h"
 #include "QCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
@@ -21,6 +21,7 @@ public:
 	// Sets default values for this character's properties
 	AQCharacterBase();
 
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -58,12 +59,32 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "QPirate")
 	bool IsHostile(AQCharacterBase* other) const;
+
+	void AddGameplayTag(const FGameplayTag& tagToAdd);
+	void RemoveGameplayTag(const FGameplayTag& tagToRemove);
+
+	/**
+	 *  
+	 * @param stunDuration <= 0，不会stun，>0 时stun
+	 */
+	UFUNCTION(BlueprintCallable, Category = "QPirate", meta = (ToolTip = "only stun when duration > 0"))
+	void TryStun(float stunDuration);
+
+#pragma region GetterAndSetters
+	const FGameplayTag& GetFullHealthTag() const { return FullHealthTag; }
+#pragma endregion
+
 private:
 	
 
 
 	void AutoAssignTeamID();
 	void Die();
+
+	void DisableControlInput();
+	void EnableControlInput();
+
+
 private:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "QPirate", meta = (AllowPrivateAccess = true))
 	UAbilitySystemComponent* AbilitySystemComp = nullptr;
@@ -71,10 +92,16 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "QPirate", meta = (AllowPrivateAccess = true))
 	UQAttributeSetBase* HealthAttribute;
 
+	UPROPERTY( EditAnywhere, Category = "QPirate", meta = (AllowPrivateAccess = true))
+	FGameplayTag FullHealthTag;
+
 	bool bIsDead = false;
 
 	const uint8 ENEMY_TEAM_ID = 255;
 	const uint8 PLAYER_TEAM_ID = 1;
 	/** teamID主要用来决定characterBase对象是否统一阵营，敌对情况 */
 	uint8 TeamID = 255;
+
+
+	FTimerHandle StunTimerHandle;
 };
