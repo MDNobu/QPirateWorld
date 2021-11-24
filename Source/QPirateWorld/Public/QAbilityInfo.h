@@ -39,4 +39,6 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "AbilityInfo")
 	TSubclassOf<UQGameplayAbilityBase> AbilityClass;
+
+
 };

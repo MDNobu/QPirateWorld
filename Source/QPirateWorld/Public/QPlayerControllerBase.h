@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "QAbilityInfo.h"
 #include "GameFramework/PlayerController.h"
 #include "QPlayerControllerBase.generated.h"
 
@@ -14,4 +15,7 @@ class QPIRATEWORLD_API AQPlayerControllerBase : public APlayerController
 {
 	GENERATED_BODY()
 	
+public:
+	UFUNCTION(BlueprintImplementableEvent, Category = "QPirate")
+	void AddToHUDAbilitySlot(FQAbilityInfo abilityInfo);
 };

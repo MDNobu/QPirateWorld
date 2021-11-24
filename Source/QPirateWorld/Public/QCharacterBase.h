@@ -11,6 +11,7 @@
 class UAbilitySystemComponent;
 class UGameplayAbility;
 class UQAttributeSetBase;
+class UQGameplayAbilityBase;
 
 UCLASS()
 class QPIRATEWORLD_API AQCharacterBase : public ACharacter, public IAbilitySystemInterface
@@ -37,7 +38,10 @@ public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "QPirate")
-	void AquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
+	void AcquireAbility(TSubclassOf<UGameplayAbility> AbilityToAquire);
+
+	UFUNCTION(BlueprintCallable, Category = "QPirate")
+	void AcquireAbilities(TArray<TSubclassOf<UGameplayAbility>> abilitiesToAcquire);
 
 	UFUNCTION()
 	void OnHealthChange(float health, float maxHealth);
@@ -85,6 +89,7 @@ private:
 	void EnableControlInput();
 
 
+	void AddToHUDAbilitySlot(TSubclassOf<UQGameplayAbilityBase> abilityToAdd);
 private:
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "QPirate", meta = (AllowPrivateAccess = true))
 	UAbilitySystemComponent* AbilitySystemComp = nullptr;

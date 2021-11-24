@@ -7,6 +7,8 @@
 #include "GameplayAbilitySpec.h"
 #include "QAttributeSetBase.h"
 #include "AIController.h"
+#include "QGameplayAbilityBase.h"
+#include "QPlayerControllerBase.h"
 #include "BrainComponent.h"
 
 // Sets default values
@@ -53,7 +55,7 @@ UAbilitySystemComponent* AQCharacterBase::GetAbilitySystemComponent() const
 	return AbilitySystemComp;
 }
 
-void AQCharacterBase::AquireAbility(TSubclassOf<UGameplayAbility> abilityToAquire)
+void AQCharacterBase::AcquireAbility(TSubclassOf<UGameplayAbility> abilityToAquire)
 {
 	if (AbilitySystemComp)
 	{
@@ -67,6 +69,23 @@ void AQCharacterBase::AquireAbility(TSubclassOf<UGameplayAbility> abilityToAquir
 	}
 }
 
+
+void AQCharacterBase::AcquireAbilities(TArray<TSubclassOf<UGameplayAbility>> abilitiesToAcquire)
+{
+	for (TSubclassOf<UGameplayAbility> ability : abilitiesToAcquire)
+	{
+		AcquireAbility(ability);
+
+		//ability如果是QGameplayAbility的子对象，加入UI
+		if (ability->IsChildOf(UQGameplayAbilityBase::StaticClass()))
+		{
+			if (TSubclassOf<UQGameplayAbilityBase> abilityBase = ability.Get())
+			{
+				AddToHUDAbilitySlot(abilityBase);
+			}
+		}
+	}
+}
 
 bool AQCharacterBase::IsHostile(AQCharacterBase* other) const
 {
@@ -169,6 +188,18 @@ void AQCharacterBase::EnableControlInput()
 		{
 			//aic->GetBrainComponent()->StopLogic(TEXT("Die"));
 			aic->GetBrainComponent()->RestartLogic();
+		}
+	}
+}
+
+void AQCharacterBase::AddToHUDAbilitySlot(TSubclassOf<UQGameplayAbilityBase> abilityToAdd)
+{
+	if (AQPlayerControllerBase* playerController = Cast<AQPlayerControllerBase>(GetController()) )
+	{
+		UQGameplayAbilityBase* abilityInstance = abilityToAdd.Get()->GetDefaultObject<UQGameplayAbilityBase>();
+		if (abilityInstance)
+		{
+			playerController->AddToHUDAbilitySlot(abilityInstance->QueryAbilityInfo());
 		}
 	}
 }
