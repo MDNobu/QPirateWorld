@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
+#include "GameplayEffectTypes.h"
+#include "Abilities/GameplayAbilityTargetTypes.h"
 #include "QCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
@@ -74,14 +76,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "QPirate", meta = (ToolTip = "only stun when duration > 0"))
 	void TryStun(float stunDuration);
 
+	UFUNCTION(BlueprintCallable, Category = "QPirate")
+	void ApplyGESpecHandelToTargetDataSpecHandle(const FGameplayEffectSpecHandle& geSpecHandle, 
+		const FGameplayAbilityTargetDataHandle& gaTargetDataHandle);
+
 #pragma region GetterAndSetters
 	const FGameplayTag& GetFullHealthTag() const { return FullHealthTag; }
 #pragma endregion
 
 private:
 	
-
-
 	void AutoAssignTeamID();
 	void Die();
 

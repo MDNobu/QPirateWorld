@@ -11,6 +11,9 @@ public class QPirateWorld : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTags", "GameplayTasks", 
 			"Core", "CoreUObject", "Engine", "InputCore", "AIModule" });
 
+
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
 		// Uncomment if you are using Slate UI

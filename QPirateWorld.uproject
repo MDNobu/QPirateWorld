@@ -10,7 +10,10 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-				"GameplayAbilities"
+				"GameplayAbilities",
+				"UMG",
+				"Slate",
+				"SlateCore"
 			]
 		}
 	],
@@ -22,6 +25,10 @@
 		},
 		{
 			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "RenderDocPlugin",
 			"Enabled": true
 		}
 	]

@@ -18,9 +18,6 @@ class QPIRATEWORLD_API UQAttributeSetBase : public UAttributeSet
 public:
 	UQAttributeSetBase();
 
-
-
-
 	void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 
 public:

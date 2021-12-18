@@ -116,6 +116,15 @@ void AQCharacterBase::TryStun(float stunDuration)
 	GetWorldTimerManager().SetTimer(StunTimerHandle, this, &AQCharacterBase::EnableControlInput, stunDuration, false);
 }
 
+void AQCharacterBase::ApplyGESpecHandelToTargetDataSpecHandle(
+	const FGameplayEffectSpecHandle& geSpecHandle, const FGameplayAbilityTargetDataHandle& gaTargetDataHandle)
+{
+	for (TSharedPtr<FGameplayAbilityTargetData> targetData : gaTargetDataHandle.Data)
+	{
+		targetData->ApplyGameplayEffectSpec(*geSpecHandle.Data.Get());
+	}
+}
+
 void AQCharacterBase::OnHealthChange(float health, float maxHealth)
 {
 	if (health <= 0 && !bIsDead)
@@ -126,6 +135,7 @@ void AQCharacterBase::OnHealthChange(float health, float maxHealth)
 	}
 
 	BP_OnHealthChange(health, maxHealth);
+	UE_LOG(LogTemp, Warning, TEXT("%s content"), *GetName());
 }
 
 void AQCharacterBase::OnManaChange(float mana, float maxMana)
